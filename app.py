@@ -24,7 +24,7 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=80, command=self.select_files)
         self.btn_select_files.grid(row=1, column=0, padx=10, pady=10)
 
-        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=80)
+        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=80, command=self.clear_selected_files)
         self.btn_clear_selected_files.grid(row=1, column=1, padx=10, pady=10)
         
         self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=80)
@@ -45,15 +45,20 @@ class MergeToolWindow(ctk.CTkToplevel):
 
     def insert_selected_files(self):
         self.txt_selected_files.configure(state='normal')
+        self.txt_selected_files.delete('0.0', 'end')
         if not self.files:
             self.txt_selected_files.insert('end', 'No selected files')
         else:
-            self.txt_selected_files.delete('0.0', 'end')
             for file in self.files:
                 filename = file.split('/')[-1]
+                print(filename)
                 self.txt_selected_files.insert('end', filename + '\n')
 
         self.txt_selected_files.configure(state='disabled')
+
+    def clear_selected_files(self):
+        self.files = []
+        self.insert_selected_files()
 
 
 class SplitToolWindow(ctk.CTkToplevel):
