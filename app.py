@@ -7,7 +7,7 @@ class MergeToolWindow(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
         self.title('PDFmerge')
-        self.geometry('500x120')
+        self.geometry('600x120')
 
         # grid configuration
         self.rowconfigure((0, 1), weight=1)
@@ -17,11 +17,11 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.lbl_selected_files = ctk.CTkLabel(self, text='Selected files:')
         self.lbl_selected_files.grid(row=0, column=0, padx=10, pady=10)
 
-        self.ent_selected_files = ctk.CTkEntry(self, placeholder_text='No selected files', height=40)
-        self.ent_selected_files.grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='ew')
+        self.txt_selected_files = ctk.CTkTextbox(self, height=50, state='disabled')
+        self.txt_selected_files.grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='nsew')
 
         # buttons
-        self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=80)
+        self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=80, command=self.select_files)
         self.btn_select_files.grid(row=1, column=0, padx=10, pady=10)
 
         self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=80)
@@ -29,6 +29,29 @@ class MergeToolWindow(ctk.CTkToplevel):
         
         self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=80)
         self.btn_merge_files.grid(row=1, column=2, padx=10, pady=10)
+
+        # list of files to merge
+        self.files = []
+        self.insert_selected_files()
+
+    def select_files(self):
+        files = fd.askopenfiles()
+        for file in files:
+            self.files.append(file.name)
+
+        self.insert_selected_files()
+
+    def insert_selected_files(self):
+        self.txt_selected_files.configure(state='normal')
+        if not self.files:
+            self.txt_selected_files.insert('end', 'No selected files')
+        else:
+            self.txt_selected_files.delete('0.0', 'end')
+            for file in self.files:
+                filename = file.split('/')[-1]
+                self.txt_selected_files.insert('end', filename + '\n')
+
+        self.txt_selected_files.configure(state='disabled')
 
 
 class SplitToolWindow(ctk.CTkToplevel):
