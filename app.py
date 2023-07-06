@@ -55,6 +55,7 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.merged_path = 'merged'
 
     def select_files(self):
+        # adds files to list of selected self.files
         files = fd.askopenfiles()
         for file in files:
             if file.name not in self.files:
@@ -63,6 +64,7 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.insert_selected_files()
 
     def insert_selected_files(self):
+        # inserts files into selected files textbox
         self.txt_selected_files.configure(state='normal')
         self.txt_selected_files.delete('0.0', 'end')
         if not self.files:
@@ -79,6 +81,7 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.insert_selected_files()
 
     def merge_files(self):
+        # merges files into one
         if not self.files:
             return
         else:
@@ -92,6 +95,7 @@ class MergeToolWindow(ctk.CTkToplevel):
                 merger.close()
 
     def get_filename(self):
+        # gets filename from filename entry, if empty filename is taken from first selected file to merge from self.files
         filename = self.ent_new_filename.get()
         if not filename:
             files = self.txt_selected_files.get('0.0', 'end').split()
@@ -105,6 +109,7 @@ class MergeToolWindow(ctk.CTkToplevel):
             return filename
             
     def create_merged_dir(self):
+        # creates directory "merged" if does not exist
         curr_dir = os.listdir()
         if 'merged' not in curr_dir:
             os.mkdir('merged')
