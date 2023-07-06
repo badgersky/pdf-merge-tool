@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import filedialog as fd
+from PyPDF2 import PdfWriter
 
 
 class MergeToolWindow(ctk.CTkToplevel):
@@ -7,28 +8,38 @@ class MergeToolWindow(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
         self.title('PDFmerge')
-        self.geometry('600x120')
+        self.geometry('600x200')
 
         # grid configuration
-        self.rowconfigure((0, 1), weight=1)
-        self.columnconfigure((0, 1, 2), weight=1)
+        self.rowconfigure((0, 1, 2), weight=1)
+        self.columnconfigure((0, 1, 2, 3), weight=1)
 
-        # selected files entry
+        # selected files textbox
         self.lbl_selected_files = ctk.CTkLabel(self, text='Selected files:')
         self.lbl_selected_files.grid(row=0, column=0, padx=10, pady=10)
 
         self.txt_selected_files = ctk.CTkTextbox(self, height=50, state='disabled')
-        self.txt_selected_files.grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='nsew')
+        self.txt_selected_files.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky='nsew')
+
+        # new file name entry
+        self.lbl_new_filename = ctk.CTkLabel(self, text='New filename:')
+        self.lbl_new_filename.grid(row=1, column=0, padx=10, pady=10)
+
+        self.ent_new_filename = ctk.CTkEntry(self, placeholder_text='New filename')
+        self.ent_new_filename.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky='nsew')
 
         # buttons
-        self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=80, command=self.select_files)
-        self.btn_select_files.grid(row=1, column=0, padx=10, pady=10)
+        self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=100, command=self.select_files)
+        self.btn_select_files.grid(row=2, column=0, padx=10, pady=10)
 
-        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=80, command=self.clear_selected_files)
-        self.btn_clear_selected_files.grid(row=1, column=1, padx=10, pady=10)
+        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=100, command=self.clear_selected_files)
+        self.btn_clear_selected_files.grid(row=2, column=1, padx=10, pady=10)
+
+        self.btn_cancel = ctk.CTkButton(self, text='BACK', width=100, command=self.destroy)
+        self.btn_cancel.grid(row=2, column=2, padx=10, pady=10)
         
-        self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=80)
-        self.btn_merge_files.grid(row=1, column=2, padx=10, pady=10)
+        self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=100)
+        self.btn_merge_files.grid(row=2, column=3, padx=10, pady=10)
 
         # list of files to merge
         self.files = []
@@ -51,7 +62,6 @@ class MergeToolWindow(ctk.CTkToplevel):
         else:
             for file in self.files:
                 filename = file.split('/')[-1]
-                print(filename)
                 self.txt_selected_files.insert('end', filename + '\n')
 
         self.txt_selected_files.configure(state='disabled')
