@@ -56,7 +56,7 @@ class MergeToolWindow(ctk.CTkToplevel):
 
     def select_files(self):
         # adds files to list of selected self.files
-        files = fd.askopenfiles()
+        files = fd.askopenfiles(filetypes=[('pdf files', '*.pdf')])
         for file in files:
             if file.name not in self.files:
                 self.files.append(file.name)
@@ -94,6 +94,9 @@ class MergeToolWindow(ctk.CTkToplevel):
                 merger.write(os.path.join(self.merged_path, filename))    
                 merger.close()
 
+                self.ent_new_filename.delete('0', 'end')
+                messagebox.showinfo('Merge Succes', 'Files were merged successfuly.')
+
     def get_filename(self):
         # gets filename from filename entry, if empty filename is taken from first selected file to merge from self.files
         filename = self.ent_new_filename.get()
@@ -104,7 +107,7 @@ class MergeToolWindow(ctk.CTkToplevel):
             if not filename.endswith('.pdf'):
                 filename += '.pdf'
             if filename in os.listdir('merged'):
-                messagebox.showerror('Filename error', f'Filename {filename} already in merged folder')
+                messagebox.showerror('Filename error', f'Filename {filename} already in merged folder.')
                 return
             return filename
             
