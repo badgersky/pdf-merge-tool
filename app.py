@@ -2,6 +2,7 @@ import os
 
 import customtkinter as ctk
 from tkinter import filedialog as fd
+from tkinter import messagebox
 from PyPDF2 import PdfMerger
 
 
@@ -81,13 +82,13 @@ class MergeToolWindow(ctk.CTkToplevel):
             return
         else:
             filename = self.get_filename()
+            if filename:
+                merger = PdfMerger()
+                for file in self.files[::-1]:
+                    merger.append(file)
 
-            merger = PdfMerger()
-            for file in self.files[::-1]:
-                merger.append(file)
-
-            merger.write(os.path.join(self.merged_path, filename))    
-            merger.close()
+                merger.write(os.path.join(self.merged_path, filename))    
+                merger.close()
 
     def get_filename(self):
         filename = self.ent_new_filename.get()
@@ -95,10 +96,12 @@ class MergeToolWindow(ctk.CTkToplevel):
             files = self.txt_selected_files.get('0.0', 'end').split()
             return files[-1]
         else:
-            if filename.endswith('.pdf'):
-                return filename
-            else:
-                return filename + '.pdf'
+            if not filename.endswith('.pdf'):
+                filename += '.pdf'
+            if filename in os.listdir('merged'):
+                messagebox.showerror('Filename error', f'Filename {filename} already in merged folder')
+                return
+            return filename
             
     def create_merged_dir(self):
         curr_dir = os.listdir()
