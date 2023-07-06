@@ -57,7 +57,8 @@ class MergeToolWindow(ctk.CTkToplevel):
     def select_files(self):
         files = fd.askopenfiles()
         for file in files:
-            self.files.append(file.name)
+            if file.name not in self.files:
+                self.files.append(file.name)
 
         self.insert_selected_files()
 
