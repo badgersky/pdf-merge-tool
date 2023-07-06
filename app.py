@@ -32,6 +32,8 @@ class MergeToolWindow(ctk.CTkToplevel):
 
         # list of files to merge
         self.files = []
+
+        # insert filenames from self.files to textbox
         self.insert_selected_files()
 
     def select_files(self):
