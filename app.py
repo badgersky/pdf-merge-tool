@@ -2,12 +2,28 @@ import customtkinter as ctk
 from tkinter import filedialog
 
 
+class MergeToll(ctk.CTkToplevel):
+
+    def __init__(self):
+        super().__init__()
+        self.title('PDFmerge')
+        self.geometry('600x400')
+
+
+class SplitTool(ctk.CTkToplevel):
+        
+     def __init__(self):
+        super().__init__()
+        self.title('PDFsplit')
+        self.geometry('600x400')
+
+
 class App(ctk.CTk):
 
     def __init__(self):
         super().__init__()
         self.geometry('300x150')
-        self.title('PDFmerge-tool')
+        self.title('PDFmerge-split')
 
         self.rowconfigure((0, 1, 2), weight=1)
         self.columnconfigure(0, weight=1)
