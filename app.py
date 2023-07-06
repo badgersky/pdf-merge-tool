@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from tkinter import filedialog
+from tkinter import filedialog as fd
 
 
 class MergeToolWindow(ctk.CTkToplevel):
@@ -7,7 +7,28 @@ class MergeToolWindow(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
         self.title('PDFmerge')
-        self.geometry('600x400')
+        self.geometry('500x120')
+
+        # grid configuration
+        self.rowconfigure((0, 1), weight=1)
+        self.columnconfigure((0, 1, 2), weight=1)
+
+        # selected files entry
+        self.lbl_selected_files = ctk.CTkLabel(self, text='Selected files:')
+        self.lbl_selected_files.grid(row=0, column=0, padx=10, pady=10)
+
+        self.ent_selected_files = ctk.CTkEntry(self, placeholder_text='No selected files', height=40)
+        self.ent_selected_files.grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='ew')
+
+        # buttons
+        self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=80)
+        self.btn_select_files.grid(row=1, column=0, padx=10, pady=10)
+
+        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=80)
+        self.btn_clear_selected_files.grid(row=1, column=1, padx=10, pady=10)
+        
+        self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=80)
+        self.btn_merge_files.grid(row=1, column=2, padx=10, pady=10)
 
 
 class SplitToolWindow(ctk.CTkToplevel):
@@ -15,7 +36,7 @@ class SplitToolWindow(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
         self.title('PDFsplit')
-        self.geometry('600x400')
+        self.geometry('300x200')
 
 
 class App(ctk.CTk):
