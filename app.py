@@ -38,7 +38,7 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.btn_cancel = ctk.CTkButton(self, text='BACK', width=100, command=self.destroy)
         self.btn_cancel.grid(row=2, column=2, padx=10, pady=10)
         
-        self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=100)
+        self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=100, command=self.merge_files)
         self.btn_merge_files.grid(row=2, column=3, padx=10, pady=10)
 
         # list of files to merge
@@ -69,6 +69,25 @@ class MergeToolWindow(ctk.CTkToplevel):
     def clear_selected_files(self):
         self.files = []
         self.insert_selected_files()
+
+    def merge_files(self):
+        if not self.files:
+            return
+        else:
+            filename = self.get_filename()
+            print(filename)
+
+
+    def get_filename(self):
+        filename = self.ent_new_filename.get()
+        if not filename:
+            files = self.txt_selected_files.get('0.0', 'end').split()
+            return files[-1]
+        else:
+            if filename.endswith('.pdf'):
+                return filename
+            else:
+                return filename + '.pdf'
 
 
 class SplitToolWindow(ctk.CTkToplevel):
