@@ -6,16 +6,10 @@ from tkinter import messagebox
 from PyPDF2 import PdfMerger
 
 
-class MergeToolWindow(ctk.CTkToplevel):
+class MyTopLevel(ctk.CTkToplevel):
 
     def __init__(self):
         super().__init__()
-        self.title('PDFmerge')
-        self.geometry('600x200')
-
-        # grid configuration
-        self.rowconfigure((0, 1, 2), weight=1)
-        self.columnconfigure((0, 1, 2, 3), weight=1)
 
         # selected files textbox
         self.lbl_selected_files = ctk.CTkLabel(self, text='Selected files:')
@@ -31,6 +25,48 @@ class MergeToolWindow(ctk.CTkToplevel):
         self.ent_new_filename = ctk.CTkEntry(self, placeholder_text='New filename')
         self.ent_new_filename.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky='nsew')
 
+        # list of selected to merge
+        self.files = []
+
+    def insert_selected_files(self):
+        # inserts files into selected files textbox
+        self.txt_selected_files.configure(state='normal')
+        self.txt_selected_files.delete('0.0', 'end')
+        if not self.files:
+            self.txt_selected_files.insert('end', 'No selected files')
+        else:
+            for file in self.files:
+                filename = file.split('/')[-1]
+                self.txt_selected_files.insert('end', filename + '\n')
+
+        self.txt_selected_files.configure(state='disabled')
+
+    def get_filename(self, directory):
+        # gets filename from filename entry, if empty filename is taken from first selected file to merge from self.files
+        filename = self.ent_new_filename.get()
+        if not filename:
+            files = self.txt_selected_files.get('0.0', 'end').split()
+            return files[-1]
+        else:
+            if not filename.endswith('.pdf'):
+                filename += '.pdf'
+            if filename in os.listdir(directory):
+                messagebox.showerror('Filename error', f'Filename {filename} already in merged folder.')
+                return
+            return filename
+
+
+class MergeToolWindow(MyTopLevel):
+
+    def __init__(self):
+        super().__init__()
+        self.title('PDFmerge')
+        self.geometry('600x200')
+
+        # grid configuration
+        self.rowconfigure((0, 1, 2), weight=1)
+        self.columnconfigure((0, 1, 2, 3), weight=1)
+
         # buttons
         self.btn_select_files = ctk.CTkButton(self, text='SELECT FILES', width=100, command=self.select_files)
         self.btn_select_files.grid(row=2, column=0, padx=10, pady=10)
@@ -43,9 +79,6 @@ class MergeToolWindow(ctk.CTkToplevel):
         
         self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=100, command=self.merge_files)
         self.btn_merge_files.grid(row=2, column=3, padx=10, pady=10)
-
-        # list of files to merge
-        self.files = []
 
         # insert filenames from self.files to textbox
         self.insert_selected_files()
@@ -63,19 +96,6 @@ class MergeToolWindow(ctk.CTkToplevel):
 
         self.insert_selected_files()
 
-    def insert_selected_files(self):
-        # inserts files into selected files textbox
-        self.txt_selected_files.configure(state='normal')
-        self.txt_selected_files.delete('0.0', 'end')
-        if not self.files:
-            self.txt_selected_files.insert('end', 'No selected files')
-        else:
-            for file in self.files:
-                filename = file.split('/')[-1]
-                self.txt_selected_files.insert('end', filename + '\n')
-
-        self.txt_selected_files.configure(state='disabled')
-
     def clear_selected_files(self):
         self.files = []
         self.insert_selected_files()
@@ -85,7 +105,7 @@ class MergeToolWindow(ctk.CTkToplevel):
         if not self.files:
             return
         else:
-            filename = self.get_filename()
+            filename = self.get_filename(directory='merged')
             if filename:
                 merger = PdfMerger()
                 for file in self.files[::-1]:
@@ -96,20 +116,6 @@ class MergeToolWindow(ctk.CTkToplevel):
 
                 self.ent_new_filename.delete('0', 'end')
                 messagebox.showinfo('Merge Succes', 'Files were merged successfuly.')
-
-    def get_filename(self):
-        # gets filename from filename entry, if empty filename is taken from first selected file to merge from self.files
-        filename = self.ent_new_filename.get()
-        if not filename:
-            files = self.txt_selected_files.get('0.0', 'end').split()
-            return files[-1]
-        else:
-            if not filename.endswith('.pdf'):
-                filename += '.pdf'
-            if filename in os.listdir('merged'):
-                messagebox.showerror('Filename error', f'Filename {filename} already in merged folder.')
-                return
-            return filename
             
     def create_merged_dir(self):
         # creates directory "merged" if does not exist
@@ -118,12 +124,16 @@ class MergeToolWindow(ctk.CTkToplevel):
             os.mkdir('merged')
 
 
-class SplitToolWindow(ctk.CTkToplevel):
+class SplitToolWindow(MyTopLevel):
         
     def __init__(self):
         super().__init__()
         self.title('PDFsplit')
-        self.geometry('300x200')
+        self.geometry('600x200')
+
+        # grid configuration
+        self.rowconfigure((0, 1, 2, 3), weight=1)
+        self.columnconfigure((0, 1, 2, 3), weight=1)
 
 
 class App(ctk.CTk):
