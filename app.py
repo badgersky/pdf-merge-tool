@@ -3,7 +3,7 @@ import os
 import customtkinter as ctk
 from tkinter import filedialog as fd
 from tkinter import messagebox
-from PyPDF2 import PdfMerger
+from PyPDF2 import PdfMerger, PdfReader
 
 
 class MyTopLevel(ctk.CTkToplevel):
@@ -13,14 +13,14 @@ class MyTopLevel(ctk.CTkToplevel):
 
         # selected files textbox
         self.lbl_selected_files = ctk.CTkLabel(self, text='Selected files:')
-        self.lbl_selected_files.grid(row=0, column=0, padx=10, pady=10)
+        self.lbl_selected_files.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
         self.txt_selected_files = ctk.CTkTextbox(self, height=50, state='disabled')
         self.txt_selected_files.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky='nsew')
 
         # new file name entry
         self.lbl_new_filename = ctk.CTkLabel(self, text='New filename:')
-        self.lbl_new_filename.grid(row=1, column=0, padx=10, pady=10)
+        self.lbl_new_filename.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
         self.ent_new_filename = ctk.CTkEntry(self, placeholder_text='New filename')
         self.ent_new_filename.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky='nsew')
@@ -129,11 +129,19 @@ class SplitToolWindow(MyTopLevel):
     def __init__(self):
         super().__init__()
         self.title('PDFsplit')
-        self.geometry('600x200')
+        self.geometry('600x250')
 
         # grid configuration
         self.rowconfigure((0, 1, 2, 3), weight=1)
         self.columnconfigure((0, 1, 2, 3), weight=1)
+
+        # split page selection
+        self.lbl_select_page = ctk.CTkLabel(self, text="Choose page number:")
+        self.lbl_select_page.grid(row=2, column=0, padx=10, pady=10, sticky='w')
+
+        var = ctk.StringVar(value="---")
+        self.select_page = ctk.CTkOptionMenu(self, width=100, variable=var, state='disabled')
+        self.select_page.grid(row=2, column=1, padx=10, pady=10)
 
         # buttons
         self.btn_select_files = ctk.CTkButton(self, text='SELECT FILE', width=100, command=self.select_file)
@@ -145,11 +153,12 @@ class SplitToolWindow(MyTopLevel):
         self.btn_cancel = ctk.CTkButton(self, text='BACK', width=100, command=self.destroy)
         self.btn_cancel.grid(row=3, column=2, padx=10, pady=10)
         
-        self.btn_merge_files = ctk.CTkButton(self, text='SPLIT', width=100, command=self.split_file)
+        self.btn_merge_files = ctk.CTkButton(self, text='SPLIT', width=100, command=self.set_option_menu_values)
         self.btn_merge_files.grid(row=3, column=3, padx=10, pady=10)
 
         # creates split direcotry if it does not exist
         self.create_split_dir()
+        self.split_path = 'split'
 
     def select_file(self):
         # adds file to list of selected self.files
@@ -158,12 +167,26 @@ class SplitToolWindow(MyTopLevel):
             self.clear_selected_files()
             self.files.append(file.name)
             self.insert_selected_files()
+            self.set_option_menu_values(file.name)
 
     def create_split_dir(self):
         # creates directory "merged" if does not exist
         curr_dir = os.listdir()
         if 'split' not in curr_dir:
             os.mkdir('split')
+
+    def set_option_menu_values(self, file):
+        reader = PdfReader(file)
+        options = [str(num) for num in range(1, len(reader.pages) + 1)]
+        var = ctk.StringVar(value=options[0])
+        self.select_page.configure(values=options, state='normal', variable=var)
+
+    def clear_selected_files(self):
+        super().clear_selected_files()
+
+        # reset option menu
+        var = ctk.StringVar(value="---")
+        self.select_page.configure(state='disabled', variable=var)
 
 
 class App(ctk.CTk):
