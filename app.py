@@ -28,6 +28,9 @@ class MyTopLevel(ctk.CTkToplevel):
         # list of selected to merge
         self.files = []
 
+        # insert filenames from self.files to textbox
+        self.insert_selected_files()
+
     def insert_selected_files(self):
         # inserts files into selected files textbox
         self.txt_selected_files.configure(state='normal')
@@ -54,6 +57,10 @@ class MyTopLevel(ctk.CTkToplevel):
                 messagebox.showerror('Filename error', f'Filename {filename} already in merged folder.')
                 return
             return filename
+        
+    def clear_selected_files(self):
+        self.files = []
+        self.insert_selected_files()
 
 
 class MergeToolWindow(MyTopLevel):
@@ -80,9 +87,6 @@ class MergeToolWindow(MyTopLevel):
         self.btn_merge_files = ctk.CTkButton(self, text='MERGE', width=100, command=self.merge_files)
         self.btn_merge_files.grid(row=2, column=3, padx=10, pady=10)
 
-        # insert filenames from self.files to textbox
-        self.insert_selected_files()
-
         # merged files directory
         self.create_merged_dir()
         self.merged_path = 'merged'
@@ -94,10 +98,6 @@ class MergeToolWindow(MyTopLevel):
             if file.name not in self.files:
                 self.files.append(file.name)
 
-        self.insert_selected_files()
-
-    def clear_selected_files(self):
-        self.files = []
         self.insert_selected_files()
 
     def merge_files(self):
@@ -135,6 +135,27 @@ class SplitToolWindow(MyTopLevel):
         self.rowconfigure((0, 1, 2, 3), weight=1)
         self.columnconfigure((0, 1, 2, 3), weight=1)
 
+        # buttons
+        self.btn_select_files = ctk.CTkButton(self, text='SELECT FILE', width=100, command=self.select_file)
+        self.btn_select_files.grid(row=3, column=0, padx=10, pady=10)
+
+        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=100, command=self.clear_selected_file)
+        self.btn_clear_selected_files.grid(row=3, column=1, padx=10, pady=10)
+
+        self.btn_cancel = ctk.CTkButton(self, text='BACK', width=100, command=self.destroy)
+        self.btn_cancel.grid(row=3, column=2, padx=10, pady=10)
+        
+        self.btn_merge_files = ctk.CTkButton(self, text='SPLIT', width=100, command=self.split_file)
+        self.btn_merge_files.grid(row=3, column=3, padx=10, pady=10)
+
+    def select_file(self):
+        # adds file to list of selected self.files
+        file = fd.askopenfile(filetypes=[('pdf files', '*.pdf')])
+        if file:
+            self.clear_selected_files()
+            self.files.append(file.name)
+            self.insert_selected_files()
+        print(self.files)
 
 class App(ctk.CTk):
 
