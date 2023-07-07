@@ -139,7 +139,7 @@ class SplitToolWindow(MyTopLevel):
         self.btn_select_files = ctk.CTkButton(self, text='SELECT FILE', width=100, command=self.select_file)
         self.btn_select_files.grid(row=3, column=0, padx=10, pady=10)
 
-        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=100, command=self.clear_selected_file)
+        self.btn_clear_selected_files = ctk.CTkButton(self, text='CLEAR', width=100, command=self.clear_selected_files)
         self.btn_clear_selected_files.grid(row=3, column=1, padx=10, pady=10)
 
         self.btn_cancel = ctk.CTkButton(self, text='BACK', width=100, command=self.destroy)
@@ -155,7 +155,7 @@ class SplitToolWindow(MyTopLevel):
             self.clear_selected_files()
             self.files.append(file.name)
             self.insert_selected_files()
-        print(self.files)
+
 
 class App(ctk.CTk):
 
