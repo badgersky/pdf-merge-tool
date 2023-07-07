@@ -148,6 +148,9 @@ class SplitToolWindow(MyTopLevel):
         self.btn_merge_files = ctk.CTkButton(self, text='SPLIT', width=100, command=self.split_file)
         self.btn_merge_files.grid(row=3, column=3, padx=10, pady=10)
 
+        # creates split direcotry if it does not exist
+        self.create_split_dir()
+
     def select_file(self):
         # adds file to list of selected self.files
         file = fd.askopenfile(filetypes=[('pdf files', '*.pdf')])
@@ -155,6 +158,12 @@ class SplitToolWindow(MyTopLevel):
             self.clear_selected_files()
             self.files.append(file.name)
             self.insert_selected_files()
+
+    def create_split_dir(self):
+        # creates directory "merged" if does not exist
+        curr_dir = os.listdir()
+        if 'split' not in curr_dir:
+            os.mkdir('split')
 
 
 class App(ctk.CTk):
