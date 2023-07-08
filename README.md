@@ -32,12 +32,10 @@ and filename-part2.pdf. After selecting file you can choose in "chose page numbe
 and "back" work the same as in the merge tool. When you click "split" button the app will split you file and put both parts in directory "split" created in repository directory.
 
 
+## Licence
 
- * ------------------------------------------------------------
- * "THE BEERWARE LICENSE" (Revision 42):
- * <author> wrote this code. As long as you retain this 
- * notice, you can do whatever you want with this stuff. If we
- * meet someday, and you think this stuff is worth it, you can
- * buy me a beer in return.
- * ------------------------------------------------------------
-
+"THE BEERWARE LICENSE" (Revision 42):
+badgersky wrote this code. As long as you retain this 
+notice, you can do whatever you want with this stuff. If we
+meet someday, and you think this stuff is worth it, you can
+buy me a beer in return.
