@@ -49,14 +49,30 @@ class MyTopLevel(ctk.CTkToplevel):
         filename = self.ent_new_filename.get()
         if not filename:
             files = self.txt_selected_files.get('0.0', 'end').split()
-            return files[-1]
+            filename = files[-1]
+            if directory == 'split':
+                return filename.split('.')[0] + '-part1.pdf', filename.split('.')[0] + '-part2.pdf'
+            if directory == 'merged':
+                return filename
         else:
             if not filename.endswith('.pdf'):
-                filename += '.pdf'
-            if filename in os.listdir(directory):
-                messagebox.showerror('Filename error', f'Filename {filename} already in merged folder.')
-                return
-            return filename
+                filename_single = filename + '.pdf'
+                filename1 = filename + '-part1.pdf'
+                filename2 = filename + '-part2.pdf'
+
+            if directory == 'merged':
+                if filename_single in os.listdir(directory):
+                    messagebox.showerror('Filename error', f'Filename {filename} already in merged folder.')
+                    return
+                else:
+                    return filename_single
+                
+            if directory == 'split':
+                if filename1 in os.listdir(directory) and filename2 in os.listdir(directory):
+                    messagebox.showerror('Filename error', f'Files: {filename1} and {filename2} already in split folder.')
+                    return
+                else:
+                    return filename1, filename2
         
     def clear_selected_files(self):
         self.files = []
@@ -184,9 +200,7 @@ class SplitToolWindow(MyTopLevel):
     def split_file(self):
         if self.files:
             file = self.files[0]
-            filename = self.get_filename(directory='split').split('.')[0]
-            filename1 = filename + '-part1.pdf'
-            filename2 = filename + '-part2.pdf'
+            filename1, filename2 = self.get_filename(directory='split')
 
             reader = PdfReader(file)
             pages = reader.pages
@@ -205,6 +219,7 @@ class SplitToolWindow(MyTopLevel):
             writer1.close()
             writer2.close()
 
+            self.ent_new_filename.delete('0', 'end')
             messagebox.showinfo('Split Succes', 'Files were split successfuly.')
 
     def clear_selected_files(self):
