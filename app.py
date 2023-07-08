@@ -3,7 +3,7 @@ import os
 import customtkinter as ctk
 from tkinter import filedialog as fd
 from tkinter import messagebox
-from PyPDF2 import PdfMerger, PdfReader
+from PyPDF2 import PdfMerger, PdfReader, PdfWriter
 
 
 class MyTopLevel(ctk.CTkToplevel):
@@ -153,7 +153,7 @@ class SplitToolWindow(MyTopLevel):
         self.btn_cancel = ctk.CTkButton(self, text='BACK', width=100, command=self.destroy)
         self.btn_cancel.grid(row=3, column=2, padx=10, pady=10)
         
-        self.btn_merge_files = ctk.CTkButton(self, text='SPLIT', width=100, command=self.set_option_menu_values)
+        self.btn_merge_files = ctk.CTkButton(self, text='SPLIT', width=100, command=self.split_file)
         self.btn_merge_files.grid(row=3, column=3, padx=10, pady=10)
 
         # creates split direcotry if it does not exist
@@ -180,6 +180,32 @@ class SplitToolWindow(MyTopLevel):
         options = [str(num) for num in range(1, len(reader.pages) + 1)]
         var = ctk.StringVar(value=options[0])
         self.select_page.configure(values=options, state='normal', variable=var)
+
+    def split_file(self):
+        if self.files:
+            file = self.files[0]
+            filename = self.get_filename(directory='split').split('.')[0]
+            filename1 = filename + '-part1.pdf'
+            filename2 = filename + '-part2.pdf'
+
+            reader = PdfReader(file)
+            pages = reader.pages
+            split_page = int(self.select_page.get())
+            
+            writer1 = PdfWriter()
+            writer2 = PdfWriter()
+            for i, page in enumerate(pages, start=1):
+                if i <= split_page:
+                    writer1.add_page(page)
+                else:
+                    writer2.add_page(page)
+            
+            writer1.write(os.path.join(self.split_path, filename1))
+            writer2.write(os.path.join(self.split_path, filename2))
+            writer1.close()
+            writer2.close()
+
+            messagebox.showinfo('Split Succes', 'Files were split successfuly.')
 
     def clear_selected_files(self):
         super().clear_selected_files()
