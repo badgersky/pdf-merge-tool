@@ -29,7 +29,7 @@ in directory "merged" which should be created in repository directory.
 Here you can select one pdf file you want to split, its name will be visible in "selected files" textbox. In "new filename" entry
 you can type filename for split pdfs, if not provided the app will use filename of chosen pdf. The app will save split pdfs as filename-part1.pdf
 and filename-part2.pdf. After selecting file you can choose in "chose page number" select box, page after which the app will split file. Buttons "clear"
-and "back" work the same as in the merge tool. When you click "split" button the app will split you file and put both parts in directory "split" created in repository directory.
+and "back" work the same as in the merge tool. When you click "split" button the app will split your file and put both parts in directory "split" created in repository directory.
 
 
 ## Licence
